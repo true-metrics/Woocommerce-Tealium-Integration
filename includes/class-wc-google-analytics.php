@@ -18,7 +18,7 @@ class WC_Google_Analytics extends WC_Integration {
 		$this->init_settings();
 		$constructor = $this->init_options();
 
-		include_once( 'class-wc-google-analytics-js.php' );
+		include_once('class-wc-tealium-integration-js.php');
 		WC_Google_Analytics_Tealium_JS::get_instance( $constructor );
 
 		if ( is_admin() ) {

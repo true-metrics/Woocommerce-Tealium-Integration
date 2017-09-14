@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WC_Google_Analytics_Tealium_JS  {
+class WC_Tealium_Integration_JS  {
 
 	private static $instance;
 

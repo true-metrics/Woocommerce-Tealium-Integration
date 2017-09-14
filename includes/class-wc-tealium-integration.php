@@ -3,15 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-/**
- * Google Analytics Integration
- *
- * Allows tracking code to be inserted into store pages.
- *
- * @class   WC_Google_Analytics_Tealium
- * @extends WC_Integration
- */
-class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
+
+class WC_Tealium_Integration extends WC_Google_Analytics {
 	
 	/**
 	 * Init and hook in the integration.
@@ -30,8 +23,8 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		$constructor = $this->init_options();
 
 		// // Contains snippets/JS tracking code
-		include_once( 'class-wc-google-analytics-js.php' );
-		WC_Google_Analytics_Tealium_JS::get_instance( $constructor );
+		include_once('class-wc-tealium-integration-js.php');
+        WC_Tealium_Integration_JS::get_instance( $constructor );
 
 		// Display an info banner on how to configure WooCommerce
 		if ( is_admin() ) {
@@ -64,11 +57,7 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		
 		//parent::__construct();
 	}
-	
-	/**
-	 * Display the tracking codes
-	 * Acts as a controller to figure out which code to display
-	 */
+
 	public function tracking_code_display() {
 		global $wp;
 		$display_ecommerce_tracking = false;
@@ -99,46 +88,32 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		}
 	}
 	
-	/**
-	 * Standard Google Analytics tracking
-	 */
+
 	protected function get_standard_tracking_code() {
-		return "<!-- WooCommerce Google Analytics via Tealium Integration -->
-		" . WC_Google_Analytics_TEALIUM_JS::get_instance()->header() . "
+		return "<!-- WooCommerce Tealium Integration -->
+		" . WC_Tealium_Integration_JS::get_instance()->header() . "
 		<script type='text/javascript'>" . WC_Google_Analytics_TEALIUM_JS::get_instance()->load_analytics() . "</script>
-		<!-- /WooCommerce Google Analytics via Tealium Integration -->";
+		<!-- /WooCommerce Tealium Integration -->";
 	}
 
-	/**
-	 * eCommerce tracking
-	 *
-	 * @param int $order_id
-	 */
 	protected function get_ecommerce_tracking_code( $order_id ) {
 		// Get the order and output tracking code
 		$order = new WC_Order( $order_id );
 
-		$code = WC_Google_Analytics_TEALIUM_JS::get_instance()->load_analytics( $order );
-		$code .= WC_Google_Analytics_TEALIUM_JS::get_instance()->add_transaction( $order );
+		$code = WC_Tealium_Integration_JS::get_instance()->load_analytics( $order );
+		$code .= WC_Tealium_Integration_JS::get_instance()->add_transaction( $order );
 
 		// Mark the order as tracked
 		update_post_meta( $order_id, '_ga_tracked', 1 );
 
 		return "
 		<!-- WooCommerce Google Analytics via Tealium Integration -->
-		" . WC_Google_Analytics_TEALIUM_JS::get_instance()->header() . "
+		" . WC_Tealium_Integration_JS::get_instance()->header() . "
 		<script type='text/javascript'>$code</script>
 		<!-- /WooCommerce Google Analytics via Tealium Integration -->
 		";
 	}
 
-	/**
-	 * Check if tracking is disabled
-	 *
-	 * @param string $type The setting to check
-	 *
-	 * @return bool True if tracking for a certain setting is disabled
-	 */
 	private function disable_tracking( $type ) {
 		// origin
 		//if ( is_admin() || current_user_can( 'manage_options' ) || ( ! $this->ga_id ) || 'no' === $type ) {
@@ -148,11 +123,6 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		}
 	}
 
-	/**
-	 * Google Analytics event tracking for single product add to cart
-	 *
-	 * @return void
-	 */
 	public function add_to_cart() {
 		if ( $this->disable_tracking( $this->ga_event_tracking_enabled ) ) {
 			return;
@@ -170,20 +140,18 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		$parameters['label']    = "'" . esc_js( $product->get_sku() ? __( 'SKU:', 'woocommerce-google-analytics-integration' ) . ' ' . $product->get_sku() : "#" . $product->id ) . "'";
 
 		if ( ! $this->disable_tracking( $this->ga_enhanced_ecommerce_tracking_enabled ) ) {
-			$code = "" . WC_Google_Analytics_TEALIUM_JS::get_instance()->tracker_var() . "( 'ec:addProduct', {";
+			$code = "" . WC_Tealium_Integration_JS::get_instance()->tracker_var() . "( 'ec:addProduct', {";
 			$code .= "'id': '" . esc_js( $product->get_sku() ? $product->get_sku() : $product->id ) . "',";
 			$code .= "'quantity': $( 'input.qty' ).val() ? $( 'input.qty' ).val() : '1'";
 			$code .= "} );";
 			$parameters['enhanced'] = $code;
 		}
 
-		WC_Google_Analytics_TEALIUM_JS::get_instance()->event_tracking_code( $parameters, '.single_add_to_cart_button' );
+        WC_Tealium_Integration_JS::get_instance()->event_tracking_code( $parameters, '.single_add_to_cart_button' );
 
 	}
 
-	/**
-	 * Enhanced Analytics event tracking for removing a product from the cart
-	 */
+
 	public function remove_from_cart() {
 		if ( $this->disable_tracking( $this->ga_use_universal_analytics ) ) {
 			return;
@@ -197,12 +165,9 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 			return;
 		}
 
-		WC_Google_Analytics_TEALIUM_JS::get_instance()->remove_from_cart();
+        WC_Tealium_Integration_JS::get_instance()->remove_from_cart();
 	}
 
-	/**
-	 * Adds the product ID and SKU to the remove product link if not present
-	 */
 	public function remove_from_cart_attributes( $url, $key ) {
 		if ( strpos( $url,'data-product_id' ) !== false ) {
 			return $url;
@@ -214,11 +179,6 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		return $url;
 	}
 
-	/**
-	 * Google Analytics event tracking for loop add to cart
-	 *
-	 * @return void
-	 */
 	public function loop_add_to_cart() {
 		if ( $this->disable_tracking( $this->ga_event_tracking_enabled ) ) {
 			return;
@@ -231,19 +191,17 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		$parameters['label']    = "($(this).data('product_sku')) ? ('SKU: ' + $(this).data('product_sku')) : ('#' + $(this).data('product_id'))"; // Product SKU or ID
 
 		if ( ! $this->disable_tracking( $this->ga_enhanced_ecommerce_tracking_enabled ) ) {
-			$code = "" . WC_Google_Analytics_TEALIUM_JS::get_instance()->tracker_var() . "( 'ec:addProduct', {";
+			$code = "" . WC_Tealium_Integration_JS::get_instance()->tracker_var() . "( 'ec:addProduct', {";
 			$code .= "'id': ($(this).data('product_sku')) ? ('SKU: ' + $(this).data('product_sku')) : ('#' + $(this).data('product_id')),";
 			$code .= "'quantity': $(this).data('quantity')";
 			$code .= "} );";
 			$parameters['enhanced'] = $code;
 		}
 
-		WC_Google_Analytics_TEALIUM_JS::get_instance()->event_tracking_code( $parameters, '.add_to_cart_button:not(.product_type_variable, .product_type_grouped)' );
+        WC_Tealium_Integration_JS::get_instance()->event_tracking_code( $parameters, '.add_to_cart_button:not(.product_type_variable, .product_type_grouped)' );
 	}
 
-	/**
-	 * Measures a listing impression (from search results)
-	 */
+
 	public function listing_impression() {
 		if ( $this->disable_tracking( $this->ga_use_universal_analytics ) ) {
 			return;
@@ -258,12 +216,10 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		}
 
 		global $product, $woocommerce_loop;
-		WC_Google_Analytics_TEALIUM_JS::get_instance()->listing_impression( $product, $woocommerce_loop['loop'] );
+        WC_Tealium_Integration_JS::get_instance()->listing_impression( $product, $woocommerce_loop['loop'] );
 	}
 
-	/**
-	 * Measure a product click from a listing page
-	 */
+
 	public function listing_click() {
 		if ( $this->disable_tracking( $this->ga_use_universal_analytics ) ) {
 			return;
@@ -278,12 +234,9 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		}
 
 		global $product, $woocommerce_loop;
-		WC_Google_Analytics_TEALIUM_JS::get_instance()->listing_click( $product, $woocommerce_loop['loop'] );
+        WC_Tealium_Integration_JS::get_instance()->listing_click( $product, $woocommerce_loop['loop'] );
 	}
 
-	/**
-	 * Measure a product detail view
-	 */
 	public function product_detail() {
 		if ( $this->disable_tracking( $this->ga_use_universal_analytics ) ) {
 			return;
@@ -298,12 +251,10 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 		}
 
 		global $product;
-		WC_Google_Analytics_TEALIUM_JS::get_instance()->product_detail( $product );
+        WC_Tealium_Integration_JS::get_instance()->product_detail( $product );
 	}
 
-	/**
-	 * Tracks when the checkout form is loaded
-	 */
+
 	public function checkout_process( $checkout ) {
 		if ( $this->disable_tracking( $this->ga_use_universal_analytics ) ) {
 			return;
@@ -317,7 +268,7 @@ class WC_Google_Analytics_Tealium extends WC_Google_Analytics {
 			return;
 		}
 
-		WC_Google_Analytics_TEALIUM_JS::get_instance()->checkout_process( WC()->cart->get_cart() );
+        WC_Tealium_Integration_JS::get_instance()->checkout_process( WC()->cart->get_cart() );
 	}
 	
 }

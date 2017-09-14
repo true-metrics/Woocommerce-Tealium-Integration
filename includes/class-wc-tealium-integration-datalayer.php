@@ -4,17 +4,16 @@ if (!defined('ABSPATH')) {
 }
 
 
-class WC_Google_Analytics_Tealium_DataLayer
+class WC_Tealium_Integration_Datalayer
 {
-
-    public function __construct()
+    function __construct()
     {
         // Add Tealium functions
         add_action('tealium_addToDataObject', array($this, 'add_datalayer'));
         add_filter('tealium_removeExclusions', array($this, 'remove_exclusions'));
     }
 
-    private static function product_get_category_line($_product)
+    static function product_get_category_line($_product)
     {
         if (is_array($_product->variation_data) && !empty($_product->variation_data)) {
             $code = "'" . esc_js(woocommerce_get_formatted_variation($_product->variation_data, true)) . "',";
@@ -32,7 +31,8 @@ class WC_Google_Analytics_Tealium_DataLayer
         return $code;
     }
 
-    private function get_page_name()
+
+    function get_page_name()
     {
         global $post;
         $name = get_the_title();
@@ -47,15 +47,14 @@ class WC_Google_Analytics_Tealium_DataLayer
             $name = "search results";
         } else if (is_category()) {
             $name = "category";
-        }
-        else if (is_archive()) {
+        } else if (is_archive()) {
             $name = "archive";
         }
         return $name;
 
     }
 
-    private function get_page_type()
+    function get_page_type()
     {
         global $wp_query;
         global $post;
@@ -77,7 +76,7 @@ class WC_Google_Analytics_Tealium_DataLayer
                 $type = $value;
             }
 
-        }  else if (is_category()) {
+        } else if (is_category()) {
             $type = "category";
             $queried_object = get_queried_object();
             $term_id = $queried_object->term_id;
@@ -150,7 +149,7 @@ class WC_Google_Analytics_Tealium_DataLayer
     }
 
 
-    private function add_datalayer_listitem($key, $value = '')
+    function add_datalayer_listitem($key, $value = '')
     {
         global $utagdata;
         $utagdata[$key] = (isset($utagdata[$key])) ? $utagdata[$key] : array();
@@ -370,7 +369,7 @@ class WC_Google_Analytics_Tealium_DataLayer
         $this->add_datalayer_listitem('page_product_category', esc_js($name));
     }
 
-    public function add_datalayer()
+    function add_datalayer()
     {
         $type = $this->get_page_type();
         $name = $this->get_page_name();
@@ -429,7 +428,7 @@ class WC_Google_Analytics_Tealium_DataLayer
 
     }
 
-    public function remove_exclusions($utagdata)
+    function remove_exclusions($utagdata)
     {
         return $utagdata;
 
@@ -449,3 +448,4 @@ class WC_Google_Analytics_Tealium_DataLayer
         return $utagdata;
     }
 }
+
