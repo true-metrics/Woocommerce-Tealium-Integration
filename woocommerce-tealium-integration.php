@@ -17,7 +17,6 @@ if (!defined('ABSPATH')) {
 if (!class_exists('WC_Tealium_Integration')) :
 
 
-
     class WC_Google_Analytics_Integration_Via_Tealium
     {
 
@@ -79,9 +78,9 @@ if (!class_exists('WC_Tealium_Integration')) :
 
         public function add_integration($integrations)
         {
+
             $integrations[] = 'WC_Tealium_Integration';
             $integrations[] = 'WC_Tealium_Integration_Datalayer';
-
             return $integrations;
         }
     }
@@ -89,6 +88,6 @@ if (!class_exists('WC_Tealium_Integration')) :
     add_action('plugins_loaded', array('WC_Google_Analytics_Integration_Via_Tealium', 'get_instance'), 10);
 
 
-
-
 endif;
+
+

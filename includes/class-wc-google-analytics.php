@@ -19,7 +19,7 @@ class WC_Google_Analytics extends WC_Integration {
 		$constructor = $this->init_options();
 
 		include_once('class-wc-tealium-integration-js.php');
-		WC_Google_Analytics_Tealium_JS::get_instance( $constructor );
+		WC_Tealium_Integration_JS::get_instance( $constructor );
 
 		if ( is_admin() ) {
 //			include_once( 'class-wc-google-analytics-info-banner.php' );
@@ -255,8 +255,8 @@ class WC_Google_Analytics extends WC_Integration {
 
 	protected function get_standard_tracking_code() {
 		return "<!-- WooCommerce Google Analytics Integration -->
-		" . WC_Google_Analytics_Tealium_JS::get_instance()->header() . "
-		<script type='text/javascript'>" . WC_Google_Analytics_Tealium_JS::get_instance()->load_analytics() . "</script>
+		" . WC_Tealium_Integration_JS::get_instance()->header() . "
+		<script type='text/javascript'>" . WC_Tealium_Integration_JS::get_instance()->load_analytics() . "</script>
 		<!-- /WooCommerce Google Analytics Integration -->";
 	}
 
@@ -264,13 +264,13 @@ class WC_Google_Analytics extends WC_Integration {
 	protected function get_ecommerce_tracking_code( $order_id ) {
 		$order = new WC_Order( $order_id );
 
-		$code = WC_Google_Analytics_Tealium_JS::get_instance()->load_analytics( $order );
-		$code .= WC_Google_Analytics_Tealium_JS::get_instance()->add_transaction( $order );
+		$code = WC_Tealium_Integration_JS::get_instance()->load_analytics( $order );
+		$code .= WC_Tealium_Integration_JS::get_instance()->add_transaction( $order );
 
 		update_post_meta( $order_id, '_ga_tracked', 1 );
 
 		return "
-		" . WC_Google_Analytics_Tealium_JS::get_instance()->header() . "
+		" . WC_Tealium_Integration_JS::get_instance()->header() . "
 		<script type='text/javascript'>$code</script>
 		";
 	}
@@ -299,14 +299,14 @@ class WC_Google_Analytics extends WC_Integration {
 		$parameters['label']    = "'" . esc_js( $product->get_sku() ? __( 'SKU:', 'woocommerce-google-analytics-integration' ) . ' ' . $product->get_sku() : "#" . $product->id ) . "'";
 
 		if ( ! $this->disable_tracking( $this->ga_enhanced_ecommerce_tracking_enabled ) ) {
-			$code = "" . WC_Google_Analytics_Tealium_JS::get_instance()->tracker_var() . "( 'ec:addProduct', {";
+			$code = "" . WC_Tealium_Integration_JS::get_instance()->tracker_var() . "( 'ec:addProduct', {";
 			$code .= "'id': '" . esc_js( $product->get_sku() ? $product->get_sku() : $product->id ) . "',";
 			$code .= "'quantity': $( 'input.qty' ).val() ? $( 'input.qty' ).val() : '1'";
 			$code .= "} );";
 			$parameters['enhanced'] = $code;
 		}
 
-		WC_Google_Analytics_Tealium_JS::get_instance()->event_tracking_code( $parameters, '.single_add_to_cart_button' );
+		WC_Tealium_Integration_JS::get_instance()->event_tracking_code( $parameters, '.single_add_to_cart_button' );
 	}
 
 
@@ -323,7 +323,7 @@ class WC_Google_Analytics extends WC_Integration {
 			return;
 		}
 
-		WC_Google_Analytics_Tealium_JS::get_instance()->remove_from_cart();
+		WC_Tealium_Integration_JS::get_instance()->remove_from_cart();
 	}
 
 
@@ -351,14 +351,14 @@ class WC_Google_Analytics extends WC_Integration {
 		$parameters['label']    = "($(this).data('product_sku')) ? ('SKU: ' + $(this).data('product_sku')) : ('#' + $(this).data('product_id'))"; // Product SKU or ID
 
 		if ( ! $this->disable_tracking( $this->ga_enhanced_ecommerce_tracking_enabled ) ) {
-			$code = "" . WC_Google_Analytics_Tealium_JS::get_instance()->tracker_var() . "( 'ec:addProduct', {";
+			$code = "" . WC_Tealium_Integration_JS::get_instance()->tracker_var() . "( 'ec:addProduct', {";
 			$code .= "'id': ($(this).data('product_sku')) ? ('SKU: ' + $(this).data('product_sku')) : ('#' + $(this).data('product_id')),";
 			$code .= "'quantity': $(this).data('quantity')";
 			$code .= "} );";
 			$parameters['enhanced'] = $code;
 		}
 
-		WC_Google_Analytics_Tealium_JS::get_instance()->event_tracking_code( $parameters, '.add_to_cart_button:not(.product_type_variable, .product_type_grouped)' );
+		WC_Tealium_Integration_JS::get_instance()->event_tracking_code( $parameters, '.add_to_cart_button:not(.product_type_variable, .product_type_grouped)' );
 	}
 
 
@@ -376,7 +376,7 @@ class WC_Google_Analytics extends WC_Integration {
 		}
 
 		global $product, $woocommerce_loop;
-		WC_Google_Analytics_Tealium_JS::get_instance()->listing_impression( $product, $woocommerce_loop['loop'] );
+		WC_Tealium_Integration_JS::get_instance()->listing_impression( $product, $woocommerce_loop['loop'] );
 	}
 
 
@@ -394,7 +394,7 @@ class WC_Google_Analytics extends WC_Integration {
 		}
 
 		global $product, $woocommerce_loop;
-		WC_Google_Analytics_Tealium_JS::get_instance()->listing_click( $product, $woocommerce_loop['loop'] );
+		WC_Tealium_Integration_JS::get_instance()->listing_click( $product, $woocommerce_loop['loop'] );
 	}
 
 
@@ -412,7 +412,7 @@ class WC_Google_Analytics extends WC_Integration {
 		}
 
 		global $product;
-		WC_Google_Analytics_Tealium_JS::get_instance()->product_detail( $product );
+		WC_Tealium_Integration_JS::get_instance()->product_detail( $product );
 
 	}
 
@@ -429,7 +429,7 @@ class WC_Google_Analytics extends WC_Integration {
 			return;
 		}
 
-		WC_Google_Analytics_Tealium_JS::get_instance()->checkout_process( WC()->cart->get_cart() );
+		WC_Tealium_Integration_JS::get_instance()->checkout_process( WC()->cart->get_cart() );
 	}
 
 	public function utm_nooverride( $return_url ) {

@@ -63,11 +63,9 @@ add_action('edited_genres', 'save_taxonomy_custom_meta', 10, 2);
 add_action('create_genres', 'save_taxonomy_custom_meta', 10, 2);
 
 
-//add extra fields to category edit form hook
 add_action('edit_category_form_fields', 'extra_category_fields');
-//add extra fields to category edit form callback function
 function extra_category_fields($tag)
-{    //check for existing featured ID
+{
     $t_id = $tag->term_id;
     $cat_meta = get_option("category_$t_id");
     ?>
@@ -84,9 +82,7 @@ function extra_category_fields($tag)
     <?php
 }
 
-// save extra category extra fields hook
 add_action('edited_category', 'save_extra_category_fileds');
-// save extra category extra fields callback function
 function save_extra_category_fileds($term_id)
 {
     if (isset($_POST['Cat_meta'])) {
@@ -111,14 +107,12 @@ function myplugin_add_custom_box()
 
 add_action('add_meta_boxes', 'myplugin_add_custom_box');
 
-/* HTML код блока */
 function myplugin_meta_box_callback()
 {
     global $post;
     wp_nonce_field(plugin_basename(__FILE__), 'myplugin_noncename');
     $values = get_post_meta($post->ID, '_my_meta_value_key', true);
 
-    // Поля формы для введения данных
     echo '<label for="myplugin_new_field">' . __("Custom page_type for tealium", 'myplugin_textdomain') . '</label> ';
     echo '<input type="text" id= "myplugin_new_field" name="myplugin_new_field" value="' . $values . '" size="25" />';
 }
@@ -137,7 +131,6 @@ function myplugin_save_postdata($post_id)
         return $post_id;
     }
 
-    // Убедимся что поле установлено.
     if (!isset($_POST['myplugin_new_field']))
         return;
 
@@ -147,3 +140,5 @@ function myplugin_save_postdata($post_id)
 }
 
 add_action('save_post', 'myplugin_save_postdata');
+
+

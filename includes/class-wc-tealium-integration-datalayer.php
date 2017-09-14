@@ -54,6 +54,7 @@ class WC_Tealium_Integration_Datalayer
 
     }
 
+
     function get_page_type()
     {
         global $wp_query;
@@ -378,13 +379,14 @@ class WC_Tealium_Integration_Datalayer
         global $post;
         global $utagdata;
         global $woocommerce;
+        global $wp;
         $utagdata = array();
 
-        $meta = get_post_meta($post->ID);
+//        $meta = get_post_meta($post->ID);
         $values = get_post_meta($post->ID, '_my_meta_value_key');
-        echo '<pre>';
-        print_r($values);
-        echo '</pre>';
+//        echo '<pre>';
+//        print_r($values);
+//        echo '</pre>';
 
         $this->get_user_info();
 
@@ -406,9 +408,9 @@ class WC_Tealium_Integration_Datalayer
         $utagdata['site_id'] = get_option('tealiumAccount');
         $utagdata['site_region'] = $woocommerce->countries->get_base_country();
 
-        echo '<pre>';
-        print_r($utagdata);
-        echo '</pre>';
+//        echo '<pre>';
+//        print_r($utagdata);
+//        echo '</pre>';
 
         // Check if is order received page and stop when the products and not tracked
         if (is_order_received_page()) {
@@ -449,3 +451,4 @@ class WC_Tealium_Integration_Datalayer
     }
 }
 
+//add_action('plugins_loaded', array('WC_Tealium_Integration_Datalayer', 'add_datalayer'), 10);

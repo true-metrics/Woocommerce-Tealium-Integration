@@ -92,7 +92,7 @@ class WC_Tealium_Integration extends WC_Google_Analytics {
 	protected function get_standard_tracking_code() {
 		return "<!-- WooCommerce Tealium Integration -->
 		" . WC_Tealium_Integration_JS::get_instance()->header() . "
-		<script type='text/javascript'>" . WC_Google_Analytics_TEALIUM_JS::get_instance()->load_analytics() . "</script>
+		<script type='text/javascript'>" . WC_Tealium_Integration_JS::get_instance()->load_analytics() . "</script>
 		<!-- /WooCommerce Tealium Integration -->";
 	}
 
