@@ -1,7 +1,7 @@
 # Woocommerce-Tealium-Integration
 Woocommerce Tealium Integration plugin 
 
-Features
+## Features
 
 Allows users to easily add a Tealium tag without editing template files.
 
