@@ -25,3 +25,6 @@ If the site is an authorized user, the following data will be displayed:
 - Name
 - Email
 - Type
+
+You can change paget_tup on pages, entries, products and sections:
+![custom-page-type](https://github.com/true-metrics/Woocommerce-Tealium-Integration/blob/master/assets/page_type.png "custom page_type")
